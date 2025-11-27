@@ -1,0 +1,7 @@
+Package: countfiles
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: Max Batiuk <maksbatiuk13@gmail.com>
+Description: Script that counts regular files in /etc excluding directories and symlinks
