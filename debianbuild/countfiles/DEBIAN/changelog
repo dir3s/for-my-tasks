@@ -1,0 +1,7 @@
+countfiles (1.0-1) unstable; urgency=medium
+
+  * Initial release.
+    - Added basic functionality for counting files in directories.
+    - Prepared Debian packaging files: control, rules, copyright.
+
+ -- Max Batiuk <maksbatiuk13@gmail.com>  Wed, 27 Nov 2025 12:00:00 +0200
