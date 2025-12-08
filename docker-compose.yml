@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+
+  jenkins-master:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins_master
+    container_name: jenkins-master
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+    restart: unless-stopped
+    networks:
+      - jenkins
+
+  jenkins-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins_builder
+    container_name: jenkins-builder
+    depends_on:
+      - jenkins-master
+    networks:
+      - jenkins
+    environment:
+      JENKINS_URL: "http://jenkins-master:8080"
+      JENKINS_AGENT_NAME: "builder"
+      JENKINS_AGENT_WORKDIR: "/home/jenkins/agent"
+      JENKINS_AGENT_SECRET: "28908b43152a7424b16b0886c0e4f8b0902e3cc471098998ca8ca51a9a895982"  
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - builder_home:/home/jenkins/agent
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:
+  builder_home:
+
+networks:
+  jenkins:

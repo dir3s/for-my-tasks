@@ -1,0 +1,22 @@
+FROM jenkins/inbound-agent:latest
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y sudo curl wget dpkg bash apt-utils && \
+    apt-get clean
+
+RUN echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+RUN mkdir -p /home/jenkins/agent
+
+COPY entrypoint.sh /home/jenkins/entrypoint.sh
+
+RUN chmod +x /home/jenkins/entrypoint.sh && \
+    chown jenkins:jenkins /home/jenkins/entrypoint.sh && \
+    chown -R jenkins:jenkins /home/jenkins
+
+USER jenkins
+WORKDIR /home/jenkins
+
+ENTRYPOINT ["/home/jenkins/entrypoint.sh"]
