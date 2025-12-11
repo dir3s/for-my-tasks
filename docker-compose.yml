@@ -38,6 +38,7 @@ services:
       - builder_home:/home/jenkins/agent
     tty: true
     restart: unless-stopped
+    user: root
 
 volumes:
   jenkins_home:

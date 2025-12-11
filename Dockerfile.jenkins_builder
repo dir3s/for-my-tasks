@@ -3,7 +3,7 @@ FROM jenkins/inbound-agent:latest
 USER root
 
 RUN apt-get update && \
-    apt-get install -y sudo curl wget dpkg bash apt-utils && \
+    apt-get install -y sudo curl wget dpkg git docker.io bash apt-utils && \
     apt-get clean
 
 RUN echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers

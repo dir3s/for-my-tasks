@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/dir3s/for-my-tasks.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t builder:latest -f Dockerfile.jenkins_builder .'
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                sh 'docker run --name builder_test -d --entrypoint tail builder:latest -f /dev/null'
+            }
+        }
+
+        stage('Install DEB and Run Script') {
+            steps {
+                sh '''
+                docker cp $WORKSPACE/debianbuild/countfiles.deb builder_test:/tmp/countfiles.deb
+
+                docker exec builder_test bash -c "sudo dpkg -i /tmp/countfiles.deb || sudo apt-get install -f -y"
+
+                docker exec builder_test bash -c "/usr/local/bin/script.sh"
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker rm -f builder_test || true'
+        }
+    }
+}
